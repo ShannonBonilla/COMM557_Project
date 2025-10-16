@@ -1,0 +1,54 @@
+import pandas as pd
+
+# Load Spotify CSVs and add a 'year' column
+spotify_files = ['spotify_top_charts_19.csv', 'spotify_top_charts_20.csv', 'spotify_top_charts_21.csv', 'spotify_top_charts_22.csv']
+spotify_dfs = []
+
+for file in spotify_files:
+    year = int(file.split('_')[-1].split('.')[0])
+    df = pd.read_csv(file) 
+    df['year'] = year
+    df = df.rename(columns={'artist_names': 'artist_name'}) 
+    spotify_dfs.append(df)
+
+spotify_all = pd.concat(spotify_dfs, ignore_index=True)
+
+# Load TikTok CSVs and add a 'year' column
+tiktok_files = ['TikTok_songs_2019.csv', 'TikTok_songs_2020.csv', 'TikTok_songs_2021.csv', 'TikTok_songs_2022.csv']
+tiktok_dfs = []
+
+for file in tiktok_files:
+    year = int(file.split('_')[-1].split('.')[0])
+    df = pd.read_csv(file) 
+    df['year'] = year
+    tiktok_dfs.append(df)
+
+tiktok_all = pd.concat(tiktok_dfs, ignore_index=True)
+
+# Merge TikTok songs and Spotify data to keep only crossovers
+# Use track_name and artist_name as merge keys 
+merged_tiktok_spotify = tiktok_all.merge(
+    spotify_all[['track_name', 'artist_name', 'weeks_on_chart']], 
+    on=['track_name', 'artist_name'],
+    how='inner'
+)
+
+# Compute chart longevity based on Spotify weeks_on_chart column 
+median_weeks = merged_tiktok_spotify['weeks_on_chart'].median()
+merged_tiktok_spotify['chart_longevity'] = merged_tiktok_spotify['weeks_on_chart'].apply(
+    lambda x: 'sustained' if x > median_weeks else 'brief'
+)
+
+# Merge with dataset_with_topics .numbers (topic modeling result done by Lea)
+dataset_with_topics = pd.read_csv('dataset_with_topics. numbers')
+
+final_dataset = dataset_with_topics.merge(
+    merged_tiktok_spotify[['track_name', 'artist_name', 'weeks_on_chart', 'chart_longevity']], 
+    on=['track_name', 'artist_name'],
+    how='inner' 
+)
+
+# Save the final dataset to a CSV file
+final_dataset.to_csv('final_tiktok_spotify_dataset.csv', index=False)
+
+print("Final dataset saved successfully.")
