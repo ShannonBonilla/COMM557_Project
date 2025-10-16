@@ -1,0 +1,13 @@
+community_id,community_name,num_songs,avg_popularity,top_topics,topic_distribution
+0,Community 0: that,156,,T-1,T-1(156)
+1,Community 1: love,146,,T0,T0(146)
+2,Community 2: bitch,123,,T2,T2(123)
+3,Community 3: pero,38,,T1,T1(38)
+4,Community 4: pero,20,,T3,T3(20)
+5,Community 5: party party,11,,T6,T6(11)
+6,Community 6: tenho,11,,T4,T4(11)
+7,Community 7: hallelujah,7,,T8,T8(7)
+8,Community 8: boom boom,4,,T11,T11(4)
+9,Community 9: going,4,,T13,T13(4)
+10,Community 10: there,3,,T9,T9(3)
+11,Community 11: diamonds,2,,T10,T10(2)
