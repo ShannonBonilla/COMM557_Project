@@ -1,5 +1,6 @@
+import os
 import pandas as pd
-
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 # Load Spotify CSVs and add a 'year' column
 spotify_files = ['spotify_top_charts_19.csv', 'spotify_top_charts_20.csv', 'spotify_top_charts_21.csv', 'spotify_top_charts_22.csv']
 spotify_dfs = []
@@ -40,7 +41,7 @@ merged_tiktok_spotify['chart_longevity'] = merged_tiktok_spotify['weeks_on_chart
 )
 
 # Merge with dataset_with_topics .numbers (topic modeling result done by Lea)
-dataset_with_topics = pd.read_csv('dataset_with_topics. numbers')
+dataset_with_topics = pd.read_csv('dataset_with_topics.csv')
 
 final_dataset = dataset_with_topics.merge(
     merged_tiktok_spotify[['track_name', 'artist_name', 'weeks_on_chart', 'chart_longevity']], 
