@@ -11,6 +11,9 @@ data_folder = os.path.join(repo_root, 'data')
 dataset_file = os.path.join(data_folder, 'data_with_topics_communities_crossover.csv')
 dataset_with_topics_communities_crossover = pd.read_csv(dataset_file)
 
+unique_pairs = dataset_with_topics_communities_crossover[['track_name', 'artist_name']].drop_duplicates()
+print("Number of unique track+artist pairs in Lea's dataset:", len(unique_pairs))
+
 # Load and combine Spotify data
 spotify_files = [
     'spotify_top_charts_19.csv',
@@ -90,6 +93,8 @@ final_dataset = dataset_with_topics_communities_crossover.merge(
 mask_final = final_dataset['track_name'].str.strip().str.lower().eq('some') & final_dataset['artist_name'].str.contains('bol', case=False, na=False)
 final_dataset.loc[mask_final, 'year'] = 2021
 final_dataset.loc[mask_final, 'chart_longevity'] = 'unknown'
+
+final_dataset = final_dataset.drop_duplicates()
 
 # Save the final dataset
 output_file = os.path.join(data_folder, 'UPDATED_dataset_with_topics_communities_crossover.csv')
