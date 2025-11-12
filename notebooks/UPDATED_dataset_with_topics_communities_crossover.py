@@ -77,12 +77,19 @@ def classify_longevity(row):
 
 merged_all['chart_longevity'] = merged_all.apply(classify_longevity, axis=1)
 
+# Fix the "Some" by BOL4 entry
+mask = merged_all['track_name'].str.strip().str.lower().eq('some') & merged_all['artist_name'].str.contains('bol', case=False, na=False)
+
 # Merge with Lea's dataset. The new columns are 'year','weeks_on_chart', and 'chart_longevity'
 final_dataset = dataset_with_topics_communities_crossover.merge(
     merged_all[['track_name', 'artist_name', 'year', 'weeks_on_chart','chart_longevity']],
     on=['track_name', 'artist_name'],
     how='left'
 )
+
+mask_final = final_dataset['track_name'].str.strip().str.lower().eq('some') & final_dataset['artist_name'].str.contains('bol', case=False, na=False)
+final_dataset.loc[mask_final, 'year'] = 2021
+final_dataset.loc[mask_final, 'chart_longevity'] = 'unknown'
 
 # Save the final dataset
 output_file = os.path.join(data_folder, 'UPDATED_dataset_with_topics_communities_crossover.csv')
@@ -94,7 +101,7 @@ print("Updated dataset saved successfully.")
 print(f"Current cutoff for sustained success (weeks on chart, upper quartile): {upper_quartile_weeks}")
 
 # Count unique track+artist pairs with their chart longevity
-unique_pairs = merged_all[['track_name', 'artist_name', 'chart_longevity']].drop_duplicates()
+unique_pairs = final_dataset[['track_name', 'artist_name', 'chart_longevity']].drop_duplicates()
 
 # Count how many in each category
 category_counts = unique_pairs['chart_longevity'].value_counts()
