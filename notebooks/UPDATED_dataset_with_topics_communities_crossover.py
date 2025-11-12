@@ -63,15 +63,15 @@ year_counts = year_counts.rename(columns={'year': 'year_count'})
 
 merged_all = merged_all.merge(year_counts, on=['track_name', 'artist_name'], how='left')
 
-# Compute median weeks on chart from Spotify data
-median_weeks = spotify_all['weeks_on_chart'].median()
+# Compute upper quartile weeks on chart from Spotify data
+upper_quartile_weeks = spotify_all['weeks_on_chart'].quantile(0.75)
 
 # Classify chart longevity
 def classify_longevity(row):
     if row['year_count'] > 1:
         return 'sustained'
     elif pd.notna(row['weeks_on_chart']):
-        return 'sustained' if row['weeks_on_chart'] > median_weeks else 'brief'
+        return 'sustained' if row['weeks_on_chart'] > upper_quartile_weeks else 'brief'
     else:
         return 'unknown'  # TikTok-only or no Spotify weeks_on_chart data
 
