@@ -58,7 +58,7 @@ merged_all = pd.merge(
 )
 
 # Compute number of years a song appears on Spotify charts
-year_counts = spotify_all.groupby(['track_name', 'artist_name'])['year'].nunique().reset_index()
+year_counts = merged_all.groupby(['track_name', 'artist_name'])['year'].nunique().reset_index()
 year_counts = year_counts.rename(columns={'year': 'year_count'})
 
 merged_all = merged_all.merge(year_counts, on=['track_name', 'artist_name'], how='left')
@@ -89,3 +89,21 @@ output_file = os.path.join(data_folder, 'UPDATED_dataset_with_topics_communities
 final_dataset.to_csv(output_file, index=False)
 
 print("Updated dataset saved successfully.")
+
+# Print cutoff for sustained success
+print(f"Current cutoff for sustained success (weeks on chart, upper quartile): {upper_quartile_weeks}")
+
+# Count unique track+artist pairs with their chart longevity
+unique_pairs = merged_all[['track_name', 'artist_name', 'chart_longevity']].drop_duplicates()
+
+# Count how many in each category
+category_counts = unique_pairs['chart_longevity'].value_counts()
+
+# Calculate percentages
+category_percentages = unique_pairs['chart_longevity'].value_counts(normalize=True) * 100
+
+# Print results
+print("\nCounts of unique track+artist pairs per category:")
+print(category_counts)
+print("\nPercentages of unique track+artist pairs per category:")
+print(category_percentages)
