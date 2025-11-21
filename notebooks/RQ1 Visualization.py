@@ -10,9 +10,9 @@ print(f"Total rows in dataset: {len(df)}")
 df_tiktok = df[df["source"].str.contains("tiktok", case=False, na=False)].copy()
 print(f"Total TikTok songs: {len(df_tiktok)}")
 
-# Remote Duplicates Based on track_name and artist_name
-df_tiktok_unique = df_tiktok.drop_duplicates(subset=["track_name", "artist_name"])
-print(f"Unique TikTok songs (after removing duplicates): {len(df_tiktok_unique)}")
+# Remove Duplicates Based on track_name and artist_name
+df_tiktok_unique = df_tiktok.drop_duplicates(subset=["track_name", "artist_name", "community"])
+print(f"Unique TikTok song-community combinations (after removing duplicates): {len(df_tiktok_unique)}")
 
 # Count Songs Per Community
 community_counts = df_tiktok_unique["community"].value_counts()
