@@ -29,7 +29,10 @@ print(top15_communities)
 # Get label_short for top 15 communities
 df_top15 = df_tiktok_unique[df_tiktok_unique["community"].isin(top15_ids)]  # Changed to df_tiktok_unique
 community_labels = df_top15.groupby("community")["label_short"].first()
-top15_labels = [community_labels[comm] for comm in top15_ids]
+top15_labels = [
+    community_labels[comm] if pd.notna(community_labels[comm]) else "Unlabeled Theme"
+    for comm in top15_ids
+]
 
 # Visualization 1: Bar Chart
 plt.figure(figsize=(14, 7))
